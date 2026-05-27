@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Backups
+*.old
+index.html_old
+
+# Logs
+*.log

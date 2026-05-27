@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Casa de la Glorieta | Music</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+
+    :root{--gold:#d8b15f;--cream:#fff8e8;--dark:#080706;--wood:#261409;--muted:#cbbca2;--glass:rgba(8,7,6,.72)}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--dark);color:var(--cream);overflow-x:hidden}
+    
+    .nav{position:fixed;z-index:20;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:12px clamp(16px,4vw,54px);background:linear-gradient(to bottom,rgba(0,0,0,.82),rgba(0,0,0,.2));backdrop-filter:blur(8px);flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--cream);font-weight:800;letter-spacing:.12em;text-transform:uppercase}.brand img{width:42px;height:42px;object-fit:cover;border-radius:50%;box-shadow:0 0 0 1px rgba(216,177,95,.35)}
+    .nav-controls{display:flex;align-items:center;gap:12px}
+    .nav-links{display:flex;align-items:center;gap:22px}
+    .nav-links a{color:var(--cream);text-decoration:none;font-size:14px;letter-spacing:.08em}
+    .nav-links a:hover{color:var(--gold)}
+    
+    .lang-toggle{background:rgba(216,177,95,.2);border:1px solid var(--gold);border-radius:40px;padding:6px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gold);transition:all .3s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+    .lang-toggle:hover{background:var(--gold);color:#1a1007}
+    
+    .menu-icon{display:none;flex-direction:column;justify-content:space-between;width:28px;height:22px;cursor:pointer;z-index:25}
+    .menu-icon span{display:block;height:3px;width:100%;background:var(--cream);border-radius:3px;transition:all .3s}
+    .menu-icon.open span:nth-child(1){transform:translateY(9px) rotate(45deg)}
+    .menu-icon.open span:nth-child(2){opacity:0}
+    .menu-icon.open span:nth-child(3){transform:translateY(-9px) rotate(-45deg)}
+    
+    .hero{min-height:100svh;display:grid;place-items:center;text-align:center;padding:120px 22px 80px;background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.78)),url('assets/costillas_baby_back.jpg') center/cover fixed}.hero-card{max-width:980px}.logo{width:min(240px,55vw);border-radius:28px;box-shadow:0 30px 90px rgba(0,0,0,.65);margin-bottom:26px}.eyebrow{color:var(--gold);font-weight:700;letter-spacing:.26em;text-transform:uppercase;font-size:14px}.hero h1{font-size:clamp(48px,9vw,112px);line-height:.9;margin:16px 0 18px;font-family:Georgia,serif;text-transform:uppercase}.hero p{font-size:clamp(18px,2.6vw,27px);max-width:760px;margin:0 auto 34px;color:#f5ead4}.btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}.btn{padding:14px 22px;border-radius:999px;border:1px solid rgba(216,177,95,.6);background:var(--gold);color:#1a1007;text-decoration:none;font-weight:800;transition:transform .2s, background .2s;display:inline-flex;align-items:center;gap:8px;cursor:pointer}.btn:hover{transform:scale(1.02);background:#e9c87b}.btn.secondary{background:rgba(0,0,0,.65);color:var(--cream)}.btn.secondary:hover{background:#1f1a12}
+    .section{padding:90px clamp(18px,5vw,76px)}.intro{background:radial-gradient(circle at top left,rgba(216,177,95,.18),transparent 36%),#0d0906}.intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;max-width:1180px;margin:auto}.intro h2,.menu h2,.visit h2{font-size:clamp(34px,5vw,68px);line-height:1;margin:0 0 18px;font-family:Georgia,serif}.intro p{font-size:18px;color:var(--muted);line-height:1.7}.stack{display:grid;grid-template-columns:1fr 1fr;gap:14px}.stack img{width:100%;height:260px;object-fit:cover;border-radius:28px;box-shadow:0 22px 55px rgba(0,0,0,.42)}.stack img:nth-child(2){transform:translateY(34px)}
+    
+    .parallax{min-height:68svh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px clamp(18px,5vw,76px);background-size:cover;background-position:center;background-attachment:fixed;background-repeat:no-repeat;position:relative}
+    .parallax:before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.72),rgba(0,0,0,.45))}
+    .parallax div{position:relative;z-index:2;max-width:760px}
+    .parallax h2{font:700 clamp(40px,7vw,82px)/.95 Georgia,serif;margin:0 0 12px}
+    .parallax p{font-size:20px;color:#f5ead4}
+    .p1{background-image:url('assets/chicharron_porkbelly.jpg')}
+    .p2{background-image:url('assets/costillas_brontosaurio_res.jpg')}
+    .p3{background-image:url('assets/aguachile_verde.jpg')}
+    
+    .promo-parallax{min-height:75vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px clamp(18px,5vw,76px);background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.55)),url('promocion_permanente.jpg') center/cover fixed;position:relative}.promo-parallax .promo-content{position:relative;max-width:720px;background:rgba(0,0,0,.55);backdrop-filter:blur(12px);border-radius:48px;padding:50px 40px;border:1px solid rgba(216,177,95,.45);animation:fadeInUp .8s ease-out}.promo-parallax h3{font-size:clamp(28px,5vw,48px);font-family:Georgia,serif;color:var(--gold);margin:0 0 8px;letter-spacing:-.01em}.promo-parallax .descuento{font-size:clamp(56px,8vw,96px);font-weight:900;letter-spacing:-.02em;margin:12px 0;line-height:1;background:linear-gradient(135deg,var(--gold) 0%,#f5e6b8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 2px 12px rgba(0,0,0,.3)}.promo-parallax .promo-dia{font-size:clamp(20px,3vw,28px);color:var(--cream);font-weight:600;margin:12px 0 0}.promo-parallax .promo-hora{font-size:18px;color:#e6ddcf;margin:8px 0}.promo-parallax .extra{border-top:1px solid rgba(216,177,95,.4);display:inline-block;margin-top:18px;padding-top:16px;font-size:16px;color:var(--gold)}.promo-parallax small{display:block;margin-top:20px;font-size:14px;opacity:.85}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    
+    .menu{background:#110b07}.menu-head{max-width:980px;margin:0 auto 44px;text-align:center}.menu-head p{color:var(--muted);font-size:18px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;max-width:1240px;margin:auto}.card{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid rgba(216,177,95,.18);border-radius:28px;overflow:hidden;box-shadow:0 16px 46px rgba(0,0,0,.34);transition:.25s}.card:hover{transform:translateY(-6px);border-color:rgba(216,177,95,.55)}.card img{width:100%;height:270px;object-fit:cover}.card div{padding:20px}.card h3{margin:0 0 8px;font-size:23px}.card p{margin:0;color:var(--muted);line-height:1.55}.tag{display:inline-block;color:#1a1007;background:var(--gold);font-size:12px;font-weight:800;border-radius:999px;padding:6px 10px;margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em}
+
+    .taplist{background:radial-gradient(circle at top right,rgba(216,177,95,.16),transparent 34%),#0b0806}.tap-wrap{max-width:1180px;margin:auto}.tap-head{text-align:center;margin-bottom:34px}.tap-head p{color:var(--muted);font-size:18px}.tap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.tap-item{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid rgba(216,177,95,.18);border-radius:22px;padding:18px}.tap-num{width:38px;height:38px;border-radius:50%;background:var(--gold);color:#1a1007;display:grid;place-items:center;font-weight:900}.tap-item h3{margin:0 0 6px;font-size:21px}.tap-item p{margin:3px 0;color:var(--muted);line-height:1.35}.tap-price{font-weight:900;color:var(--gold);font-size:20px;white-space:nowrap}.tap-abv{display:inline-block;margin-top:6px;padding:4px 8px;border:1px solid rgba(216,177,95,.35);border-radius:999px;color:#f5ead4;font-size:13px}.snacks{margin-top:26px;background:rgba(0,0,0,.35);border:1px solid rgba(216,177,95,.24);border-radius:26px;padding:24px}.snacks h3{margin:0 0 14px;font-size:26px}.snack-row{display:flex;justify-content:space-between;gap:18px;padding:10px 0;border-top:1px solid rgba(255,255,255,.1);font-weight:700}.growler{margin-top:18px;text-align:center;color:#1a1007;background:var(--gold);border-radius:999px;padding:14px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .visit{background:linear-gradient(rgba(0,0,0,.68),rgba(0,0,0,.78)),url('assets/logo.jpg') center/cover fixed;text-align:center}.visit-box{max-width:850px;margin:auto;background:var(--glass);border:1px solid rgba(216,177,95,.28);border-radius:34px;padding:42px;backdrop-filter:blur(10px)}.visit p{font-size:20px;color:#f5ead4}.footer{padding:28px;text-align:center;color:#9d927f;background:#050403;font-size:14px}.footer a{color:#cbbd9a;text-decoration:none;transition:color .2s}.footer a:hover{color:var(--gold)}
+    
+
+
+    /* Compact dish prices */
+    .dish-title{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;line-height:1.15}
+    .dish-title .dish-price{color:var(--gold);font-weight:900;white-space:nowrap;font-size:18px}
+
+    /* Updated taplist: 2 columns, beer color dots and filled hop scale */
+    .taplist{background:radial-gradient(circle at top right,rgba(216,177,95,.12),transparent 34%),#0b0806}
+    .tap-wrap{max-width:980px;margin:auto}.tap-head{text-align:center;margin-bottom:28px}.tap-head p{color:var(--muted);font-size:16px}
+    .tap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:920px;margin:auto}
+    .tap-item{display:block;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(216,177,95,.2);border-radius:18px;padding:14px 16px;box-shadow:0 12px 28px rgba(0,0,0,.22)}
+    .tap-item h3{margin:0;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;font-size:17px;line-height:1.15}
+
+    .tap-item.sold-out{position:relative;opacity:.58;filter:grayscale(.25)}
+    .tap-item.sold-out .tap-name span:last-child,
+    .tap-item.sold-out .tap-price,
+    .tap-item.sold-out p{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:#ffdddd}
+    .tap-item.sold-out:after{content:"NO DISPONIBLE";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-8deg);z-index:3;padding:8px 16px;border:2px solid #ffdddd;border-radius:999px;color:#ffdddd;background:rgba(0,0,0,.62);font-size:13px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;box-shadow:0 0 18px rgba(255,221,221,.22);pointer-events:none}
+    .tap-name{
+  display:flex;
+  align-items:center;
+  min-width:0;
+  gap:6px;
+}.tap-name span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tap-right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:flex-start;
+  gap:7px;
+  flex:0 0 auto;
+}
+.tap-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+}
+    .tap-item p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.35}.tap-price{font-weight:900;color:var(--gold);font-size:15px;white-space:nowrap}
+    .beer-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),0 0 7px rgba(255,255,255,.16);flex:0 0 auto}.ipa{background:#f4b942}.hazy{background:#f28c28}.lager{background:#f7e27d}.red{background:#a63d2f}.vienna{background:#c46a2d}.stout{background:#2b1b17}.session{background:#e0a93c}.pale{background:#efb34a}
+    .hops{display:flex;gap:3px;align-items:center}.hops span{width:8px;height:8px;border-radius:50%;background:#2c2c2c;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}.hops span.filled{background:linear-gradient(135deg,#7CFC00,#3cb043);box-shadow:0 0 6px rgba(124,252,0,.55),0 0 12px rgba(60,176,67,.35)}.tap-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:60px;
+  height:20px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#ffd84d,#ffb300);
+  color:#1a1007;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:
+    0 0 8px rgba(255,200,0,.35),
+    0 0 14px rgba(255,170,0,.2);
+  animation:pulseBadge 1.8s infinite;
+}@keyframes pulseBadge{0%{transform:scale(1);box-shadow:0 0 8px rgba(255,200,0,.35),0 0 14px rgba(255,170,0,.18)}50%{transform:scale(1.06);box-shadow:0 0 14px rgba(255,220,0,.65),0 0 24px rgba(255,170,0,.4)}100%{transform:scale(1);box-shadow:0 0 8px rgba(255,200,0,.35),0 0 14px rgba(255,170,0,.18)}}
+    .tap-item-new{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:start;
+      gap:10px;
+    }
+    .tap-item-new .tap-info{
+      min-width:0;
+    }
+    .tap-item-new .tap-info h3{
+      display:block;
+      margin:0;
+      font-size:17px;
+      line-height:1.15;
+    }
+    .tap-item-new .tap-info p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .tap-item-new .tap-right{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      justify-content:flex-start;
+      gap:7px;
+      min-width:max-content;
+    }
+    .tap-item-new .tap-actions{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:10px;
+    }
+    .tap-item-new .tap-badge{
+      align-self:flex-end;
+    }
+
+    @media(max-width:900px){
+      .menu-icon{display:flex}
+      .nav-links{position:fixed;top:70px;left:-100%;width:70%;height:calc(100vh - 70px);background:rgba(0,0,0,.95);backdrop-filter:blur(12px);flex-direction:column;align-items:flex-start;padding:30px 24px;gap:24px;transition:left .3s ease;z-index:20;border-right:1px solid rgba(216,177,95,.3)}
+      .nav-links.active{left:0}
+      .nav-links a{font-size:18px}
+      .intro-grid,.cards,.tap-grid{grid-template-columns:1fr}
+      .stack img{height:220px}.stack img:nth-child(2){transform:none}
+      .parallax,.hero,.visit,.promo-parallax{background-attachment:scroll}
+      .card img{height:250px}
+      .promo-parallax .promo-content{padding:30px 20px}
+      .brand-text{font-size:14px}
+      .logo{width:180px}
+    }
+  
+
+    body.music-page {
+      background:#050403;
+      min-height:100vh;
+      overflow:hidden;
+    }
+
+    .music-screen {
+      position:fixed;
+      inset:0;
+      background:#050403;
+      color:var(--cream);
+    }
+
+    .music-panel {
+      position:absolute;
+      inset:0;
+      opacity:0;
+      visibility:hidden;
+      transition:opacity .8s ease, visibility .8s ease;
+    }
+
+    .music-panel.active {
+      opacity:1;
+      visibility:visible;
+      z-index:2;
+    }
+
+    .video-panel {
+      background:#000;
+      display:grid;
+      place-items:center;
+    }
+
+    #ytPlayer {
+      width:100vw;
+      height:100vh;
+      border:0;
+    }
+
+    .menu-panel {
+      overflow:auto;
+      background:#110b07;
+    }
+
+    .menu-panel .menu {
+      min-height:100vh;
+      padding-top:44px;
+      padding-bottom:44px;
+    }
+
+    .menu-panel .menu-head {
+      margin-bottom:26px;
+    }
+
+    .menu-panel .cards {
+      max-width:1380px;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:18px;
+    }
+
+    .menu-panel .card img {
+      height:220px;
+    }
+
+    .music-start {
+      position:fixed;
+      inset:0;
+      z-index:10;
+      display:grid;
+      place-items:center;
+      background:rgba(0,0,0,.82);
+      backdrop-filter:blur(10px);
+      padding:28px;
+      text-align:center;
+    }
+
+    .music-start.hidden {
+      display:none;
+    }
+
+    .music-start-box {
+      max-width:620px;
+      border:1px solid rgba(216,177,95,.35);
+      border-radius:34px;
+      padding:34px;
+      background:rgba(8,7,6,.76);
+      box-shadow:0 24px 70px rgba(0,0,0,.52);
+    }
+
+    .music-start-box h1 {
+      margin:0 0 12px;
+      font-family:Georgia,serif;
+      font-size:clamp(34px,5vw,58px);
+      line-height:1;
+    }
+
+    .music-start-box p {
+      color:var(--muted);
+      font-size:18px;
+      margin:0 0 22px;
+      line-height:1.5;
+    }
+
+    .music-note {
+      margin-top:14px;
+      color:#cbbca2;
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .music-status {
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      z-index:6;
+      padding:8px 12px;
+      border-radius:999px;
+      color:#1a1007;
+      background:var(--gold);
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      opacity:.9;
+    }
+
+    @media(max-width:900px){
+      body.music-page {
+        overflow:auto;
+      }
+      .menu-panel .cards {
+        grid-template-columns:1fr;
+      }
+    }
+
+    .music-nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:6;display:none;gap:8px;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);border:1px solid rgba(216,177,95,.3);border-radius:999px;padding:5px}
+    .music-nav-btn{padding:8px 20px;border-radius:999px;border:none;background:transparent;color:var(--cream);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:background .2s,color .2s}
+    .music-nav-btn.active{background:var(--gold);color:#1a1007}
+    .music-nav-btn:hover:not(.active){background:rgba(216,177,95,.2)}
+  </style>
+</head>
+<body class="music-page">
+  <main class="music-screen">
+    <section id="videoPanel" class="music-panel video-panel" aria-label="Playlist musical">
+      <div id="ytPlayer" style="width:100vw;height:100vh;"></div>
+    </section>
+
+    <section id="menuPanel" class="music-panel menu-panel" aria-label="Tap list">
+      <iframe id="taplistFrame" src="index.html#taplist" title="Tap list" style="width:100%;height:100%;border:0;display:block;"></iframe>
+    </section>
+
+
+    <div id="musicStatus" class="music-status">Video</div>
+
+    <div id="musicNav" class="music-nav">
+      <button id="btnVideo" class="music-nav-btn" type="button">▶ Video</button>
+      <button id="btnTaplist" class="music-nav-btn" type="button">🍺 Tap list</button>
+    </div>
+
+    <div id="musicStart" class="music-start">
+      <div class="music-start-box">
+        <div class="eyebrow">Casa de la Glorieta</div>
+        <h1>Modo música</h1>
+        <p>Abre el playlist y alterna automáticamente entre video y tap list cada 30 segundos.</p>
+        <button id="startBtn" class="btn" type="button">▶ Iniciar pantalla</button>
+        <div class="music-note">Esta versión usa el embed oficial de playlist completa. Si YouTube muestra “video no disponible”, es restricción del video/playlist para iframe y no de la página.</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // YouTube IFrame API — shuffle + random start
+    (function () {
+      var tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+    })();
+
+    var ytPlayer;
+    var ytReady = false;
+
+    window.onYouTubeIframeAPIReady = function () {
+      ytPlayer = new YT.Player('ytPlayer', {
+        width: '100%',
+        height: '100%',
+        playerVars: {
+          listType: 'playlist',
+          list: 'PLw-VjHDlEOgtkcsMrt_l4MVtcHpuUOgVM',
+          autoplay: 0,
+          controls: 1,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1
+        },
+        events: {
+          onReady: function (e) {
+            ytReady = true;
+            e.target.setShuffle(true);
+          }
+        }
+      });
+    };
+
+    const VIDEO_MS   = 90000;
+    const TAPLIST_MS = 60000;
+    let showingVideo = false;
+    let switchTimer  = null;
+
+    const videoPanel   = document.getElementById("videoPanel");
+    const menuPanel    = document.getElementById("menuPanel");
+    const taplistFrame = document.getElementById("taplistFrame");
+    const statusEl     = document.getElementById("musicStatus");
+    const startOverlay = document.getElementById("musicStart");
+    const musicNav     = document.getElementById("musicNav");
+    const btnVideo     = document.getElementById("btnVideo");
+    const btnTaplist   = document.getElementById("btnTaplist");
+
+    function setPanel(showVideo) {
+      showingVideo = showVideo;
+      videoPanel.classList.toggle("active", showVideo);
+      menuPanel.classList.toggle("active", !showVideo);
+      statusEl.textContent = showVideo ? "Video" : "Tap list";
+      btnVideo.classList.toggle("active", showVideo);
+      btnTaplist.classList.toggle("active", !showVideo);
+
+      if (!showVideo) {
+        taplistFrame.src = 'index.html#taplist&' + Date.now();
+      }
+
+      if (switchTimer) clearTimeout(switchTimer);
+      switchTimer = setTimeout(() => setPanel(!showingVideo), showVideo ? VIDEO_MS : TAPLIST_MS);
+    }
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      startOverlay.classList.add("hidden");
+      musicNav.style.display = "flex";
+      if (ytReady) {
+        ytPlayer.playVideoAt(Math.floor(Math.random() * 30));
+      }
+      setPanel(true);
+    });
+
+    btnVideo.addEventListener("click", () => setPanel(true));
+    btnTaplist.addEventListener("click", () => setPanel(false));
+
+    document.addEventListener("keydown", (event) => {
+      if (event.code === "Space") {
+        event.preventDefault();
+        if (switchTimer) clearTimeout(switchTimer);
+        setPanel(!showingVideo);
+      }
+    });
+  </script>
+</body>
+</html>

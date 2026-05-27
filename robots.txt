@@ -1,0 +1,4 @@
+# robots.txt for Casa de la Glorieta
+User-agent: *
+Allow: /
+Sitemap: https://glorieta.casa/sitemap.xml
