@@ -1,6 +1,10 @@
 [build]
   publish = "."
 
+[[edge_functions]]
+  path = "/*"
+  function = "lang-detect"
+
 [[redirects]]
   from = "/*"
   to = "/:splat.html"

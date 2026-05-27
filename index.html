@@ -584,9 +584,18 @@
       localStorage.setItem('preferred_language', lang);
     }
 
-    // Load saved preference
-    const savedLang = localStorage.getItem('preferred_language');
-    if (savedLang === 'es' || savedLang === 'en') updateLanguage(savedLang);
+    // Load saved preference, or read geo-cookie set by edge function, or fall back to browser locale
+    function getCookie(name) {
+      const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+    const savedLang = localStorage.getItem('preferred_language') || getCookie('preferred_language');
+    if (savedLang === 'es' || savedLang === 'en') {
+      updateLanguage(savedLang);
+    } else {
+      const browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+      updateLanguage(browserLang.startsWith('es') ? 'es' : 'en');
+    }
     
     langToggle.addEventListener('click', () => updateLanguage(currentLang === 'es' ? 'en' : 'es'));
     
