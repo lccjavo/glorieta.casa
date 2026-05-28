@@ -377,27 +377,34 @@
     const btnVideo     = document.getElementById("btnVideo");
     const btnTaplist   = document.getElementById("btnTaplist");
 
-    // After the taplist iframe loads, tighten spacing so all 10 beers
-    // fit and are centered on a horizontal TV screen.
+    // After the taplist iframe loads, scale and center content so all
+    // 10 beers are fully visible and centered on a horizontal TV screen.
     taplistFrame.addEventListener('load', function () {
       try {
         const doc = taplistFrame.contentDocument;
         if (!doc || !doc.body) return;
 
-        // Hide the fixed nav bar — frees ~60px at the top of the frame
+        // Hide the fixed nav bar
         const nav = doc.querySelector('.nav');
         if (nav) nav.style.display = 'none';
 
-        // Collapse the heavy section padding (90px → 18px) so the grid
-        // sits closer to the center of the screen vertically
+        // Scale the whole page to 88% — keeps text readable on a TV
+        // viewed from a distance while fitting all 10 beers on screen
+        doc.body.style.zoom = '0.88';
+
         const section = doc.getElementById('taplist');
         if (section) {
-          section.style.paddingTop    = '18px';
-          section.style.paddingBottom = '18px';
-          // Re-scroll after layout settles so the section top aligns with
-          // the viewport top, giving the grid maximum vertical space
+          // Strip section padding so the grid fills the frame
+          section.style.paddingTop    = '8px';
+          section.style.paddingBottom = '8px';
+
+          // Tighten the heading margin
+          const tapHead = section.querySelector('.tap-head');
+          if (tapHead) tapHead.style.marginBottom = '12px';
+
+          // Center the section vertically in the TV frame
           requestAnimationFrame(function () {
-            section.scrollIntoView({ behavior: 'instant', block: 'start' });
+            section.scrollIntoView({ behavior: 'instant', block: 'center' });
           });
         }
       } catch (e) {}
@@ -412,7 +419,7 @@
       btnTaplist.classList.toggle("active", !showVideo);
 
       if (!showVideo) {
-        taplistFrame.src = 'index.html#taplist&' + Date.now();
+        taplistFrame.src = 'index.html?v=' + Date.now() + '#taplist';
       }
 
       if (switchTimer) clearTimeout(switchTimer);
