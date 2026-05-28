@@ -401,28 +401,46 @@
           /* Always: hide the homepage nav bar */
           '.nav { display:none !important; }',
 
-          /* Always: shrink the heavy 90px top padding so all 10 beers */
-          /* fit on screen — this only applies inside the /music embed   */
-          '#taplist { padding-top:20px !important; }',
-
-          /* Tighten gap between heading and grid */
-          '.tap-head { margin-bottom:14px !important; }',
-
-          /* ── Wider layout for large screens (TV ≥ 1200px wide) ── */
-          '@media (min-width:1200px) {',
-          '  .tap-wrap { max-width:92vw !important; }',
-          '  .tap-grid { max-width:100% !important; gap:16px !important; }',
-          '  .tap-item-new .tap-info h3 { font-size:22px !important; }',
-          '  .tap-item-new .tap-info p  { font-size:14px !important; }',
-          '  .tap-price                 { font-size:18px !important; }',
+          /* Section fills 97vh with dark bg — hides the food image    */
+          /* that bleeds in from the next section. Flex-centers content */
+          /* vertically for a clean kiosk look on the TV.              */
+          '#taplist {',
+          '  min-height:97vh !important;',
+          '  padding-top:24px !important;',
+          '  padding-bottom:24px !important;',
+          '  padding-left:0 !important;',
+          '  padding-right:0 !important;',
+          '  display:flex !important;',
+          '  flex-direction:column !important;',
+          '  justify-content:center !important;',
           '}',
 
-          /* ── Full TV 1080p+ (≥ 1600px wide) ── */
+          '.tap-head { margin-bottom:14px !important; }',
+
+          /* ── Large screen ≥ 1200px ── */
+          '@media (min-width:1200px) {',
+          '  .tap-wrap { max-width:92vw !important; }',
+          '  .tap-grid { max-width:100% !important; gap:18px !important; }',
+          '  .tap-item { padding:20px 22px !important; }',
+          '  .tap-item-new .tap-info h3 { font-size:24px !important; line-height:1.2 !important; }',
+          '  .tap-item-new .tap-info p  { font-size:15px !important; }',
+          '  .tap-price                 { font-size:20px !important; }',
+          '  .hops span                 { width:10px !important; height:10px !important; }',
+          '  .beer-dot                  { width:14px !important; height:14px !important; }',
+          '}',
+
+          /* ── Full 1080p TV ≥ 1600px — readable from 2m at the bar ── */
           '@media (min-width:1600px) {',
-          '  .tap-wrap { max-width:88vw !important; }',
-          '  .tap-item-new .tap-info h3 { font-size:26px !important; }',
-          '  .tap-item-new .tap-info p  { font-size:16px !important; }',
-          '  .tap-price                 { font-size:21px !important; }',
+          '  .tap-wrap { max-width:86vw !important; }',
+          '  .tap-grid { gap:22px !important; }',
+          '  .tap-item { padding:26px 30px !important; }',
+          '  .tap-item-new .tap-info h3 { font-size:32px !important; }',
+          '  .tap-item-new .tap-info p  { font-size:18px !important; }',
+          '  .tap-price                 { font-size:26px !important; }',
+          '  .tap-head h2               { font-size:56px !important; margin-bottom:8px !important; }',
+          '  .tap-head p                { font-size:18px !important; }',
+          '  .hops span                 { width:12px !important; height:12px !important; }',
+          '  .beer-dot                  { width:16px !important; height:16px !important; }',
           '}'
         ].join('\n');
         doc.head.appendChild(style);
