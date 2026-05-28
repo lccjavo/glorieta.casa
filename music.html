@@ -377,6 +377,32 @@
     const btnVideo     = document.getElementById("btnVideo");
     const btnTaplist   = document.getElementById("btnTaplist");
 
+    // After the taplist iframe loads, tighten spacing so all 10 beers
+    // fit and are centered on a horizontal TV screen.
+    taplistFrame.addEventListener('load', function () {
+      try {
+        const doc = taplistFrame.contentDocument;
+        if (!doc || !doc.body) return;
+
+        // Hide the fixed nav bar — frees ~60px at the top of the frame
+        const nav = doc.querySelector('.nav');
+        if (nav) nav.style.display = 'none';
+
+        // Collapse the heavy section padding (90px → 18px) so the grid
+        // sits closer to the center of the screen vertically
+        const section = doc.getElementById('taplist');
+        if (section) {
+          section.style.paddingTop    = '18px';
+          section.style.paddingBottom = '18px';
+          // Re-scroll after layout settles so the section top aligns with
+          // the viewport top, giving the grid maximum vertical space
+          requestAnimationFrame(function () {
+            section.scrollIntoView({ behavior: 'instant', block: 'start' });
+          });
+        }
+      } catch (e) {}
+    });
+
     function setPanel(showVideo) {
       showingVideo = showVideo;
       videoPanel.classList.toggle("active", showVideo);
