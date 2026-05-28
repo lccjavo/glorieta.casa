@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Casa de la Glorieta | Tap list</title>
+  <style>
+    /* ── Base ─────────────────────────────────────────────────────── */
+    :root {
+      --gold:#d8b15f;
+      --cream:#fff8e8;
+      --dark:#080706;
+      --muted:#cbbca2;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:#0b0806;
+      color:var(--cream);
+      overflow-x:hidden;
+    }
+
+    /* ── Eyebrow label ────────────────────────────────────────────── */
+    .eyebrow {
+      color:var(--gold);
+      font-weight:700;
+      letter-spacing:.26em;
+      text-transform:uppercase;
+      font-size:14px;
+    }
+
+    /* ── Taplist section ──────────────────────────────────────────── */
+    .taplist {
+      background:radial-gradient(circle at top right,rgba(216,177,95,.12),transparent 34%),#0b0806;
+    }
+
+    .tap-wrap { max-width:980px; margin:auto; }
+    .tap-head  { text-align:center; margin-bottom:28px; }
+    .tap-head p{ color:var(--muted); font-size:16px; }
+
+    .tap-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      max-width:920px;
+      margin:auto;
+    }
+
+    .tap-item {
+      display:block;
+      position:relative;
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+      border:1px solid rgba(216,177,95,.2);
+      border-radius:18px;
+      padding:14px 16px;
+      box-shadow:0 12px 28px rgba(0,0,0,.22);
+    }
+
+    /* Sold-out — discrete gray */
+    .tap-item.sold-out { opacity:.52; filter:grayscale(.6); }
+    .tap-item.sold-out .tap-name span:last-child,
+    .tap-item.sold-out .tap-price,
+    .tap-item.sold-out p {
+      text-decoration:line-through;
+      text-decoration-thickness:2px;
+      text-decoration-color:#999;
+    }
+    .tap-item.sold-out:after {
+      content:"NO DISPONIBLE";
+      position:absolute;
+      top:50%; left:50%;
+      transform:translate(-50%,-50%) rotate(-8deg);
+      z-index:3;
+      padding:6px 14px;
+      border:1px solid #888;
+      border-radius:999px;
+      color:#bbb;
+      background:rgba(0,0,0,.68);
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      pointer-events:none;
+    }
+
+    /* Card inner layout */
+    .tap-item-new {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:start;
+      gap:10px;
+    }
+    .tap-item-new .tap-info    { min-width:0; }
+    .tap-item-new .tap-info h3 { display:block; margin:0; font-size:17px; line-height:1.15; }
+    .tap-item-new .tap-info p  { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.35; }
+    .tap-item-new .tap-right {
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      justify-content:flex-start;
+      gap:7px;
+      min-width:max-content;
+    }
+    .tap-item-new .tap-actions {
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:10px;
+    }
+    .tap-item-new .tap-badge { align-self:flex-end; }
+
+    .tap-name {
+      display:flex;
+      align-items:center;
+      min-width:0;
+      gap:6px;
+    }
+    .tap-name span:last-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    .tap-right {
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      justify-content:flex-start;
+      gap:7px;
+      flex:0 0 auto;
+    }
+    .tap-actions {
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:10px;
+    }
+
+    .tap-price { font-weight:900; color:var(--gold); font-size:15px; white-space:nowrap; }
+
+    /* Beer color dots */
+    .beer-dot {
+      width:12px; height:12px;
+      border-radius:50%;
+      display:inline-block;
+      margin-right:8px;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),0 0 7px rgba(255,255,255,.16);
+      flex:0 0 auto;
+    }
+    .ipa     { background:#f4b942; }
+    .hazy    { background:#f28c28; }
+    .lager   { background:#f7e27d; }
+    .red     { background:#a63d2f; }
+    .vienna  { background:#c46a2d; }
+    .stout   { background:#2b1b17; }
+    .session { background:#e0a93c; }
+    .pale    { background:#efb34a; }
+
+    /* Hop bitterness dots */
+    .hops { display:flex; gap:3px; align-items:center; }
+    .hops span {
+      width:8px; height:8px;
+      border-radius:50%;
+      background:#2c2c2c;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+    .hops span.filled {
+      background:linear-gradient(135deg,#7CFC00,#3cb043);
+      box-shadow:0 0 6px rgba(124,252,0,.55),0 0 12px rgba(60,176,67,.35);
+    }
+
+    /* "Nuevo" badge */
+    .tap-badge {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:60px; height:20px;
+      border-radius:999px;
+      background:linear-gradient(135deg,#ffd84d,#ffb300);
+      color:#1a1007;
+      font-size:8px; font-weight:900;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      white-space:nowrap;
+      border:1px solid rgba(255,255,255,.15);
+      box-shadow:0 0 8px rgba(255,200,0,.35),0 0 14px rgba(255,170,0,.2);
+      animation:pulseBadge 1.8s infinite;
+    }
+    @keyframes pulseBadge {
+      0%   { transform:scale(1);    box-shadow:0 0 8px  rgba(255,200,0,.35),0 0 14px rgba(255,170,0,.18); }
+      50%  { transform:scale(1.06); box-shadow:0 0 14px rgba(255,220,0,.65),0 0 24px rgba(255,170,0,.40); }
+      100% { transform:scale(1);    box-shadow:0 0 8px  rgba(255,200,0,.35),0 0 14px rgba(255,170,0,.18); }
+    }
+
+    /* ── TV display styles — baked in, no JS injection needed ─────── */
+
+    /* Section fills the screen with dark background and centers content */
+    #taplist {
+      min-height:97vh;
+      padding-top:24px;
+      padding-bottom:24px;
+      padding-left:0;
+      padding-right:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+
+    .tap-head { margin-bottom:14px; }
+
+    /* ≥ 1200px — large screen */
+    @media (min-width:1200px) {
+      .tap-wrap  { max-width:92vw; }
+      .tap-grid  { max-width:100%; gap:18px; }
+      .tap-item  { padding:20px 22px; }
+      .tap-item-new .tap-info h3 { font-size:24px; line-height:1.2; }
+      .tap-item-new .tap-info p  { font-size:15px; }
+      .tap-price                 { font-size:20px; }
+      .hops span                 { width:10px; height:10px; }
+      .beer-dot                  { width:14px; height:14px; }
+    }
+
+    /* ≥ 1600px — 1080p TV, readable from 2m at the bar */
+    @media (min-width:1600px) {
+      .tap-wrap  { max-width:86vw; }
+      .tap-grid  { gap:22px; }
+      .tap-item  { padding:26px 30px; }
+      .tap-item-new .tap-info h3 { font-size:32px; }
+      .tap-item-new .tap-info p  { font-size:18px; }
+      .tap-price                 { font-size:26px; }
+      .tap-head h2               { font-size:56px; margin-bottom:8px; }
+      .tap-head p                { font-size:18px; }
+      .hops span                 { width:12px; height:12px; }
+      .beer-dot                  { width:16px; height:16px; }
+    }
+  </style>
+</head>
+<body>
+
+<section id="taplist" class="taplist">
+  <div class="tap-wrap">
+
+    <div class="tap-head">
+      <div class="eyebrow">Cerveza artesanal</div>
+      <h2>Tap list</h2>
+      <p>Selección en barril · Precios en pesos mexicanos</p>
+    </div>
+
+    <div class="tap-grid">
+
+      <article class="tap-item tap-item-new">
+        <div class="tap-info">
+          <h3><span class="tap-name"><span class="beer-dot pale"></span><span>1. Old School Hops</span></span></h3>
+          <p>American Pale Ale · 4 Bros · 5.2%</p>
+        </div>
+        <div class="tap-right">
+          <span class="tap-actions">
+            <span class="hops"><span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span></span>
+            <span class="tap-price">$100</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="tap-item tap-item-new">
+        <div class="tap-info">
+          <h3><span class="tap-name"><span class="beer-dot lager"></span><span>2. Light Lager</span></span></h3>
+          <p>Light Lager · Cardera · 3.5%</p>
+        </div>
+        <div class="tap-right">
+          <span class="tap-actions">
+            <span class="hops"><span class="filled"></span><span></span><span></span><span></span><span></span></span>
+            <span class="tap-price">$80</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="tap-item tap-item-new sold-out">
+        <div class="tap-info">
+          <h3><span class="tap-name"><span class="beer-dot red"></span><span>3. Izalco</span></span></h3>
+          <p>Irish Red · Cachimbon · 4.2%</p>
+        </div>
+        <div class="tap-right">
+          <span class="tap-actions">
+            <span class="hops"><span class="filled"></span><span class="filled"></span><span></span><span></span><span></span></span>
+            <span class="tap-price">$100</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="tap-item tap-item-new">
+        <div class="tap-info">
+          <h3><span class="tap-name"><span class="beer-dot vienna"></span><span>4. Duo</span></span></h3>
+          <p>Vienna Ale · 4 Bros/Cachimbon · 5.0%</p>
+        </div>
+        <div class="tap-right">
+          <span class="tap-actions">
+            <span class="hops"><span class="filled"></span><span class="filled"></span><span></span><span></span><span></span></span>
+            <span class="tap-price">$100</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="tap-item tap-item-new">
+        <div class="tap-info">
+          <h3><span class="tap-name"><span class="beer-dot hazy"></span><span>5. Murky Mosice</span></span></h3>
+          <p>Hazy Session IPA · Cardera · 4.9%</p>
+        </div>
+        <div class="tap-right">
+          <span class="tap-actions">
+            <span class="hops"><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span></span>
+            <span class="tap-price">$100</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="tap-item tap-item-new">
+        <div class="tap-info">
+          <h3><span class="tap-name"><span class="beer-dot session"></span><span>6. Pura Vida</span></span></h3>
+          <p>Session IPA · Punta Banda/Cachimbon/Heisenberg · 4.8%</p>
+        </div>
+        <div class="tap-right">
+          <span class="tap-actions">
+            <span class="hops"><span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span></span>
+            <span class="tap-price">$100</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="tap-item tap-item-new">
+        <div class="tap-info">
+          <h3><span class="tap-name"><span class="beer-dot lager"></span><span>7. Pacific Daydream</span></span></h3>
+          <p>West Coast Pils · Corteza/Cosaco · 5.2%</p>
+        </div>
+        <div class="tap-right">
+          <span class="tap-actions">
+            <span class="hops"><span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span></span>
+            <span class="tap-price">$100</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="tap-item tap-item-new">
+        <div class="tap-info">
+          <h3><span class="tap-name"><span class="beer-dot hazy"></span><span>8. Medium Light</span></span></h3>
+          <p>Hazy Session IPA · Nightmare · 3.8%</p>
+        </div>
+        <div class="tap-right">
+          <span class="tap-actions">
+            <span class="hops"><span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span></span>
+            <span class="tap-price">$100</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="tap-item tap-item-new">
+        <div class="tap-info">
+          <h3><span class="tap-name"><span class="beer-dot stout"></span><span>9. Carajillo Stout</span></span></h3>
+          <p>Stout con café · Cardera · 6.5%</p>
+        </div>
+        <div class="tap-right">
+          <span class="tap-actions">
+            <span class="hops"><span class="filled"></span><span></span><span></span><span></span><span></span></span>
+            <span class="tap-price">$100</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="tap-item tap-item-new">
+        <div class="tap-info">
+          <h3><span class="tap-name"><span class="beer-dot stout"></span><span>10. Naufragio</span></span></h3>
+          <p>Bourbon Porter · Escafandra · 6.0%</p>
+        </div>
+        <div class="tap-right">
+          <span class="tap-actions">
+            <span class="hops"><span class="filled"></span><span></span><span></span><span></span><span></span></span>
+            <span class="tap-price">$100</span>
+          </span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

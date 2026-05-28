@@ -316,7 +316,7 @@
     </section>
 
     <section id="menuPanel" class="music-panel menu-panel" aria-label="Tap list">
-      <iframe id="taplistFrame" src="index.html#taplist" title="Tap list" style="width:100%;flex:1;min-height:0;border:0;display:block;"></iframe>
+      <iframe id="taplistFrame" src="taplist-tv.html" title="Tap list" style="width:100%;flex:1;min-height:0;border:0;display:block;"></iframe>
       <div class="taplist-spacer"></div>
     </section>
 
@@ -386,67 +386,6 @@
     const btnVideo     = document.getElementById("btnVideo");
     const btnTaplist   = document.getElementById("btnTaplist");
 
-    // Inject TV-display styles into the taplist iframe.
-    // CSS from music.html cannot cross the iframe boundary, so we inject
-    // a <style> tag after load. Scoped entirely to the /music embed.
-    taplistFrame.addEventListener('load', function () {
-      try {
-        var doc = taplistFrame.contentDocument;
-        if (!doc || !doc.head) return;
-        var old = doc.getElementById('music-tv-styles');
-        if (old) old.remove();
-        var style = doc.createElement('style');
-        style.id = 'music-tv-styles';
-        style.textContent = [
-          /* Always: hide the homepage nav bar */
-          '.nav { display:none !important; }',
-
-          /* Section fills 97vh with dark bg — hides the food image    */
-          /* that bleeds in from the next section. Flex-centers content */
-          /* vertically for a clean kiosk look on the TV.              */
-          '#taplist {',
-          '  min-height:97vh !important;',
-          '  padding-top:24px !important;',
-          '  padding-bottom:24px !important;',
-          '  padding-left:0 !important;',
-          '  padding-right:0 !important;',
-          '  display:flex !important;',
-          '  flex-direction:column !important;',
-          '  justify-content:center !important;',
-          '}',
-
-          '.tap-head { margin-bottom:14px !important; }',
-
-          /* ── Large screen ≥ 1200px ── */
-          '@media (min-width:1200px) {',
-          '  .tap-wrap { max-width:92vw !important; }',
-          '  .tap-grid { max-width:100% !important; gap:18px !important; }',
-          '  .tap-item { padding:20px 22px !important; }',
-          '  .tap-item-new .tap-info h3 { font-size:24px !important; line-height:1.2 !important; }',
-          '  .tap-item-new .tap-info p  { font-size:15px !important; }',
-          '  .tap-price                 { font-size:20px !important; }',
-          '  .hops span                 { width:10px !important; height:10px !important; }',
-          '  .beer-dot                  { width:14px !important; height:14px !important; }',
-          '}',
-
-          /* ── Full 1080p TV ≥ 1600px — readable from 2m at the bar ── */
-          '@media (min-width:1600px) {',
-          '  .tap-wrap { max-width:86vw !important; }',
-          '  .tap-grid { gap:22px !important; }',
-          '  .tap-item { padding:26px 30px !important; }',
-          '  .tap-item-new .tap-info h3 { font-size:32px !important; }',
-          '  .tap-item-new .tap-info p  { font-size:18px !important; }',
-          '  .tap-price                 { font-size:26px !important; }',
-          '  .tap-head h2               { font-size:56px !important; margin-bottom:8px !important; }',
-          '  .tap-head p                { font-size:18px !important; }',
-          '  .hops span                 { width:12px !important; height:12px !important; }',
-          '  .beer-dot                  { width:16px !important; height:16px !important; }',
-          '}'
-        ].join('\n');
-        doc.head.appendChild(style);
-      } catch (e) {}
-    });
-
     function setPanel(showVideo) {
       showingVideo = showVideo;
       videoPanel.classList.toggle("active", showVideo);
@@ -456,7 +395,7 @@
       btnTaplist.classList.toggle("active", !showVideo);
 
       if (!showVideo) {
-        taplistFrame.src = 'index.html?v=' + Date.now() + '#taplist';
+        taplistFrame.src = 'taplist-tv.html?v=' + Date.now();
       }
 
       if (switchTimer) clearTimeout(switchTimer);

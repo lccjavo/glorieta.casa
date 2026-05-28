@@ -125,11 +125,11 @@
     .tap-item{display:block;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(216,177,95,.2);border-radius:18px;padding:14px 16px;box-shadow:0 12px 28px rgba(0,0,0,.22)}
     .tap-item h3{margin:0;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;font-size:17px;line-height:1.15}
 
-    .tap-item.sold-out{position:relative;opacity:.58;filter:grayscale(.25)}
+    .tap-item.sold-out{position:relative;opacity:.52;filter:grayscale(.6)}
     .tap-item.sold-out .tap-name span:last-child,
     .tap-item.sold-out .tap-price,
-    .tap-item.sold-out p{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:#ffdddd}
-    .tap-item.sold-out:after{content:"NO DISPONIBLE";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-8deg);z-index:3;padding:8px 16px;border:2px solid #ffdddd;border-radius:999px;color:#ffdddd;background:rgba(0,0,0,.62);font-size:13px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;box-shadow:0 0 18px rgba(255,221,221,.22);pointer-events:none}
+    .tap-item.sold-out p{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:#999}
+    .tap-item.sold-out:after{content:"NO DISPONIBLE";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-8deg);z-index:3;padding:6px 14px;border:1px solid #888;border-radius:999px;color:#bbb;background:rgba(0,0,0,.68);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;pointer-events:none}
     .tap-name{
   display:flex;
   align-items:center;
@@ -344,7 +344,7 @@
     </span>
   </div>
 </article>
-          <article class="tap-item tap-item-new">
+          <article class="tap-item tap-item-new sold-out">
   <div class="tap-info">
     <h3><span class="tap-name"><span class="beer-dot red"></span><span>3. Izalco</span></span></h3>
     <p>Irish Red · Cachimbon · 4.2%</p>
