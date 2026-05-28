@@ -202,6 +202,7 @@
     .menu-panel {
       overflow:auto;
       background:#110b07;
+      padding-bottom:160px;
     }
 
     .menu-panel .menu {
@@ -290,6 +291,9 @@
       body.music-page {
         overflow:auto;
       }
+      .menu-panel {
+        padding-bottom:90px;
+      }
       .menu-panel .cards {
         grid-template-columns:1fr;
       }
@@ -308,7 +312,7 @@
     </section>
 
     <section id="menuPanel" class="music-panel menu-panel" aria-label="Tap list">
-      <iframe id="taplistFrame" src="index.html" title="Tap list" style="width:100%;height:100%;border:0;display:block;"></iframe>
+      <iframe id="taplistFrame" src="index.html#taplist" title="Tap list" style="width:100%;height:100%;border:0;display:block;"></iframe>
     </section>
 
 
@@ -377,41 +381,6 @@
     const btnVideo     = document.getElementById("btnVideo");
     const btnTaplist   = document.getElementById("btnTaplist");
 
-    // After the taplist iframe loads, scale and center content so all
-    // 10 beers are fully visible and centered on a horizontal TV screen.
-    taplistFrame.addEventListener('load', function () {
-      try {
-        const doc = taplistFrame.contentDocument;
-        if (!doc || !doc.body) return;
-
-        // Hide immediately so the user never sees the hero section
-        doc.body.style.visibility = 'hidden';
-
-        // Hide the fixed nav bar
-        const nav = doc.querySelector('.nav');
-        if (nav) nav.style.display = 'none';
-
-        // Scale the whole page to 88% so all 10 beers fit on screen
-        doc.body.style.zoom = '0.88';
-
-        const section = doc.getElementById('taplist');
-        if (section) {
-          section.style.paddingTop    = '8px';
-          section.style.paddingBottom = '120px';
-
-          const tapHead = section.querySelector('.tap-head');
-          if (tapHead) tapHead.style.marginBottom = '12px';
-
-          // Single instant jump to center — no competing auto-scroll
-          // since there is no #taplist fragment in the src
-          requestAnimationFrame(function () {
-            section.scrollIntoView({ behavior: 'instant', block: 'center' });
-            doc.body.style.visibility = 'visible';
-          });
-        }
-      } catch (e) {}
-    });
-
     function setPanel(showVideo) {
       showingVideo = showVideo;
       videoPanel.classList.toggle("active", showVideo);
@@ -421,7 +390,7 @@
       btnTaplist.classList.toggle("active", !showVideo);
 
       if (!showVideo) {
-        taplistFrame.src = 'index.html?v=' + Date.now();
+        taplistFrame.src = 'index.html?v=' + Date.now() + '#taplist';
       }
 
       if (switchTimer) clearTimeout(switchTimer);
