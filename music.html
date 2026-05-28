@@ -308,7 +308,7 @@
     </section>
 
     <section id="menuPanel" class="music-panel menu-panel" aria-label="Tap list">
-      <iframe id="taplistFrame" src="index.html#taplist" title="Tap list" style="width:100%;height:100%;border:0;display:block;"></iframe>
+      <iframe id="taplistFrame" src="index.html" title="Tap list" style="width:100%;height:100%;border:0;display:block;"></iframe>
     </section>
 
 
@@ -384,27 +384,29 @@
         const doc = taplistFrame.contentDocument;
         if (!doc || !doc.body) return;
 
+        // Hide immediately so the user never sees the hero section
+        doc.body.style.visibility = 'hidden';
+
         // Hide the fixed nav bar
         const nav = doc.querySelector('.nav');
         if (nav) nav.style.display = 'none';
 
-        // Scale the whole page to 88% — keeps text readable on a TV
-        // viewed from a distance while fitting all 10 beers on screen
+        // Scale the whole page to 88% so all 10 beers fit on screen
         doc.body.style.zoom = '0.88';
 
         const section = doc.getElementById('taplist');
         if (section) {
-          // Strip section padding so the grid fills the frame
           section.style.paddingTop    = '8px';
           section.style.paddingBottom = '8px';
 
-          // Tighten the heading margin
           const tapHead = section.querySelector('.tap-head');
           if (tapHead) tapHead.style.marginBottom = '12px';
 
-          // Center the section vertically in the TV frame
+          // Single instant jump to center — no competing auto-scroll
+          // since there is no #taplist fragment in the src
           requestAnimationFrame(function () {
             section.scrollIntoView({ behavior: 'instant', block: 'center' });
+            doc.body.style.visibility = 'visible';
           });
         }
       } catch (e) {}
@@ -419,7 +421,7 @@
       btnTaplist.classList.toggle("active", !showVideo);
 
       if (!showVideo) {
-        taplistFrame.src = 'index.html?v=' + Date.now() + '#taplist';
+        taplistFrame.src = 'index.html?v=' + Date.now();
       }
 
       if (switchTimer) clearTimeout(switchTimer);
