@@ -202,6 +202,14 @@
     .menu-panel {
       overflow:auto;
       background:#110b07;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .taplist-spacer {
+      flex-shrink:0;
+      height:80px;
+      background:#0b0806;
     }
 
     .menu-panel .menu {
@@ -308,7 +316,8 @@
     </section>
 
     <section id="menuPanel" class="music-panel menu-panel" aria-label="Tap list">
-      <iframe id="taplistFrame" src="index.html#taplist" title="Tap list" style="width:100%;height:100%;border:0;display:block;"></iframe>
+      <iframe id="taplistFrame" src="index.html#taplist" title="Tap list" style="width:100%;flex:1;min-height:0;border:0;display:block;"></iframe>
+      <div class="taplist-spacer"></div>
     </section>
 
 
@@ -376,16 +385,6 @@
     const musicNav     = document.getElementById("musicNav");
     const btnVideo     = document.getElementById("btnVideo");
     const btnTaplist   = document.getElementById("btnTaplist");
-
-    // Add breathing room below item 10 so the floating nav buttons
-    // don't overlap the last beer row. Only extends the section's own
-    // dark background — no overlay, no layout change to the tap list.
-    taplistFrame.addEventListener('load', function () {
-      try {
-        const section = taplistFrame.contentDocument.getElementById('taplist');
-        if (section) section.style.paddingBottom = '180px';
-      } catch (e) {}
-    });
 
     function setPanel(showVideo) {
       showingVideo = showVideo;
