@@ -386,6 +386,49 @@
     const btnVideo     = document.getElementById("btnVideo");
     const btnTaplist   = document.getElementById("btnTaplist");
 
+    // Inject TV-display styles into the taplist iframe.
+    // CSS from music.html cannot cross the iframe boundary, so we inject
+    // a <style> tag after load. Scoped entirely to the /music embed.
+    taplistFrame.addEventListener('load', function () {
+      try {
+        var doc = taplistFrame.contentDocument;
+        if (!doc || !doc.head) return;
+        var old = doc.getElementById('music-tv-styles');
+        if (old) old.remove();
+        var style = doc.createElement('style');
+        style.id = 'music-tv-styles';
+        style.textContent = [
+          /* Always: hide the homepage nav bar */
+          '.nav { display:none !important; }',
+
+          /* Always: shrink the heavy 90px top padding so all 10 beers */
+          /* fit on screen — this only applies inside the /music embed   */
+          '#taplist { padding-top:20px !important; }',
+
+          /* Tighten gap between heading and grid */
+          '.tap-head { margin-bottom:14px !important; }',
+
+          /* ── Wider layout for large screens (TV ≥ 1200px wide) ── */
+          '@media (min-width:1200px) {',
+          '  .tap-wrap { max-width:92vw !important; }',
+          '  .tap-grid { max-width:100% !important; gap:16px !important; }',
+          '  .tap-item-new .tap-info h3 { font-size:22px !important; }',
+          '  .tap-item-new .tap-info p  { font-size:14px !important; }',
+          '  .tap-price                 { font-size:18px !important; }',
+          '}',
+
+          /* ── Full TV 1080p+ (≥ 1600px wide) ── */
+          '@media (min-width:1600px) {',
+          '  .tap-wrap { max-width:88vw !important; }',
+          '  .tap-item-new .tap-info h3 { font-size:26px !important; }',
+          '  .tap-item-new .tap-info p  { font-size:16px !important; }',
+          '  .tap-price                 { font-size:21px !important; }',
+          '}'
+        ].join('\n');
+        doc.head.appendChild(style);
+      } catch (e) {}
+    });
+
     function setPanel(showVideo) {
       showingVideo = showVideo;
       videoPanel.classList.toggle("active", showVideo);
