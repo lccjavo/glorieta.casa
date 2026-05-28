@@ -303,10 +303,44 @@
       }
     }
 
-    .music-nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:6;display:none;gap:8px;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);border:1px solid rgba(216,177,95,.3);border-radius:999px;padding:5px}
-    .music-nav-btn{padding:8px 20px;border-radius:999px;border:none;background:transparent;color:var(--cream);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:background .2s,color .2s}
-    .music-nav-btn.active{background:var(--gold);color:#1a1007}
-    .music-nav-btn:hover:not(.active){background:rgba(216,177,95,.2)}
+    /* ── Bottom nav: pill → rounded box when gear opens ──────────── */
+    .music-nav {
+      position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
+      z-index:6; display:none; flex-direction:column; align-items:center;
+      background:rgba(0,0,0,.72); backdrop-filter:blur(10px);
+      border:1px solid rgba(216,177,95,.3); border-radius:999px;
+      transition:border-radius .25s ease;
+    }
+    .music-nav.expanded { border-radius:20px; }
+    .music-nav-main { display:flex; gap:8px; padding:5px; }
+    .music-nav-timing {
+      display:flex; flex-wrap:wrap; gap:6px; justify-content:center;
+      max-height:0; overflow:hidden; opacity:0; padding:0 12px;
+      transition:max-height .35s ease, opacity .25s ease, padding .35s ease;
+    }
+    .music-nav.expanded .music-nav-timing { max-height:120px; opacity:1; padding:10px 12px 6px; }
+    .music-nav-btn { padding:8px 20px; border-radius:999px; border:none; background:transparent; color:var(--cream); font-size:13px; font-weight:700; cursor:pointer; letter-spacing:.06em; text-transform:uppercase; transition:background .2s,color .2s; }
+    .music-nav-btn.active { background:var(--gold); color:#1a1007; }
+    .music-nav-btn:hover:not(.active) { background:rgba(216,177,95,.2); }
+    .music-nav-gear { font-size:16px; padding:8px 13px; letter-spacing:0; opacity:.6; }
+    .music-nav.expanded .music-nav-gear { color:var(--gold); opacity:1; }
+    .nav-countdown { font-size:12px; font-weight:700; color:var(--muted); padding:0 2px; min-width:28px; text-align:center; align-self:center; }
+    .timing-opt { padding:5px 12px; border-radius:999px; border:1px solid rgba(216,177,95,.35); background:transparent; color:var(--cream); font-size:11px; font-weight:700; cursor:pointer; letter-spacing:.04em; white-space:nowrap; transition:background .2s,color .2s; }
+    .timing-opt.active { background:var(--gold); color:#1a1007; border-color:var(--gold); }
+    .timing-opt:hover:not(.active) { background:rgba(216,177,95,.15); }
+
+    /* Mobile: nav anchors to bottom edge */
+    @media(max-width:767px) {
+      .music-status { display:none; }
+      .music-nav { left:0; right:0; bottom:0; transform:none; border-radius:18px 18px 0 0; border-left:none; border-right:none; border-bottom:none; }
+      .music-nav.expanded { border-radius:18px 18px 0 0; }
+      .music-nav-main { width:100%; justify-content:center; padding:10px 20px max(14px,env(safe-area-inset-bottom)); }
+      .music-nav-btn { flex:1; max-width:160px; text-align:center; padding:10px 8px; }
+      .music-nav-gear { flex:0 0 auto; max-width:none; }
+      .music-nav-timing { width:100%; padding:0 20px; }
+      .music-nav.expanded .music-nav-timing { max-height:150px; padding:12px 20px 8px; }
+      .taplist-spacer { height:max(80px, calc(60px + env(safe-area-inset-bottom))); }
+    }
   </style>
 </head>
 <body class="music-page">
@@ -324,15 +358,26 @@
     <div id="musicStatus" class="music-status">Video</div>
 
     <div id="musicNav" class="music-nav">
-      <button id="btnVideo" class="music-nav-btn" type="button">▶ Video</button>
-      <button id="btnTaplist" class="music-nav-btn" type="button">🍺 Tap list</button>
+      <div class="music-nav-timing" id="navTiming">
+        <button class="timing-opt active" data-video="30" data-taplist="30">30/30 s</button>
+        <button class="timing-opt" data-video="60" data-taplist="60">60/60 s</button>
+        <button class="timing-opt" data-video="90" data-taplist="60">90/60 s</button>
+        <button class="timing-opt" data-video="-1" data-taplist="0">Solo video</button>
+        <button class="timing-opt" data-video="0" data-taplist="-1">Solo tap list</button>
+      </div>
+      <div class="music-nav-main">
+        <button id="btnVideo" class="music-nav-btn" type="button">▶ Video</button>
+        <button id="btnTaplist" class="music-nav-btn" type="button">🍺 Tap list</button>
+        <span id="navCountdown" class="nav-countdown"></span>
+        <button id="btnGear" class="music-nav-btn music-nav-gear" type="button">⚙</button>
+      </div>
     </div>
 
     <div id="musicStart" class="music-start">
       <div class="music-start-box">
         <div class="eyebrow">Casa de la Glorieta</div>
         <h1>Modo música</h1>
-        <p>Abre el playlist y alterna automáticamente entre video y tap list cada 30 segundos.</p>
+        <p>Abre el playlist y alterna entre video y tap list. Cambia el modo con ⚙ mientras corre.</p>
         <button id="startBtn" class="btn" type="button">▶ Iniciar pantalla</button>
         <div class="music-note">Esta versión usa el embed oficial de playlist completa. Si YouTube muestra “video no disponible”, es restricción del video/playlist para iframe y no de la página.</div>
       </div>
@@ -372,19 +417,35 @@
       });
     };
 
-    const VIDEO_MS   = 30000;
-    const TAPLIST_MS = 30000;
-    let showingVideo = false;
-    let switchTimer  = null;
+    let videoMs    = 30000;
+    let taplistMs  = 30000;
+    let autoSwitch = true;
+    let showingVideo  = false;
+    let switchTimer   = null;
+    let countdownInterval = null;
 
-    const videoPanel   = document.getElementById("videoPanel");
-    const menuPanel    = document.getElementById("menuPanel");
-    const taplistFrame = document.getElementById("taplistFrame");
-    const statusEl     = document.getElementById("musicStatus");
-    const startOverlay = document.getElementById("musicStart");
-    const musicNav     = document.getElementById("musicNav");
-    const btnVideo     = document.getElementById("btnVideo");
-    const btnTaplist   = document.getElementById("btnTaplist");
+    const videoPanel    = document.getElementById("videoPanel");
+    const menuPanel     = document.getElementById("menuPanel");
+    const taplistFrame  = document.getElementById("taplistFrame");
+    const statusEl      = document.getElementById("musicStatus");
+    const startOverlay  = document.getElementById("musicStart");
+    const musicNav      = document.getElementById("musicNav");
+    const btnVideo      = document.getElementById("btnVideo");
+    const btnTaplist    = document.getElementById("btnTaplist");
+    const btnGear       = document.getElementById("btnGear");
+    const navCountdown  = document.getElementById("navCountdown");
+
+    function startCountdown(durationMs) {
+      if (countdownInterval) clearInterval(countdownInterval);
+      navCountdown.textContent = '';
+      if (!autoSwitch) return;
+      const endTime = Date.now() + durationMs;
+      countdownInterval = setInterval(() => {
+        const secs = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+        navCountdown.textContent = secs + 's';
+        if (secs <= 0) clearInterval(countdownInterval);
+      }, 500);
+    }
 
     function setPanel(showVideo) {
       showingVideo = showVideo;
@@ -399,20 +460,54 @@
       }
 
       if (switchTimer) clearTimeout(switchTimer);
-      switchTimer = setTimeout(() => setPanel(!showingVideo), showVideo ? VIDEO_MS : TAPLIST_MS);
+      if (autoSwitch) {
+        const duration = showVideo ? videoMs : taplistMs;
+        switchTimer = setTimeout(() => setPanel(!showingVideo), duration);
+        startCountdown(duration);
+      } else {
+        navCountdown.textContent = '';
+      }
     }
+
+    document.querySelectorAll('#navTiming .timing-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#navTiming .timing-opt').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const v = parseInt(btn.dataset.video);
+        const t = parseInt(btn.dataset.taplist);
+        if (v === 0) {
+          autoSwitch = false;
+          if (switchTimer) clearTimeout(switchTimer);
+          navCountdown.textContent = '';
+          if (showingVideo) setPanel(false);
+        } else if (t === 0) {
+          autoSwitch = false;
+          if (switchTimer) clearTimeout(switchTimer);
+          navCountdown.textContent = '';
+          if (!showingVideo) setPanel(true);
+        } else {
+          autoSwitch = true;
+          videoMs   = v * 1000;
+          taplistMs = t * 1000;
+          if (switchTimer) clearTimeout(switchTimer);
+          const duration = showingVideo ? videoMs : taplistMs;
+          switchTimer = setTimeout(() => setPanel(!showingVideo), duration);
+          startCountdown(duration);
+        }
+        musicNav.classList.remove('expanded');
+      });
+    });
 
     document.getElementById("startBtn").addEventListener("click", () => {
       startOverlay.classList.add("hidden");
       musicNav.style.display = "flex";
-      if (ytReady) {
-        ytPlayer.playVideoAt(Math.floor(Math.random() * 30));
-      }
+      if (ytReady) ytPlayer.playVideoAt(Math.floor(Math.random() * 30));
       setPanel(true);
     });
 
-    btnVideo.addEventListener("click", () => setPanel(true));
-    btnTaplist.addEventListener("click", () => setPanel(false));
+    btnGear.addEventListener("click", () => musicNav.classList.toggle('expanded'));
+    btnVideo.addEventListener("click", () => { musicNav.classList.remove('expanded'); setPanel(true); });
+    btnTaplist.addEventListener("click", () => { musicNav.classList.remove('expanded'); setPanel(false); });
 
     document.addEventListener("keydown", (event) => {
       if (event.code === "Space") {

@@ -190,6 +190,15 @@
       100% { transform:scale(1);    box-shadow:0 0 8px  rgba(255,200,0,.35),0 0 14px rgba(255,170,0,.18); }
     }
 
+    /* ── Mobile: single-column, no fixed height ──────────────────── */
+    @media (max-width:767px) {
+      .tap-grid { grid-template-columns:1fr; }
+      #taplist { min-height:auto; padding-top:16px; padding-bottom:72px; }
+      .tap-wrap { padding:0 12px; }
+      .tap-head { margin-bottom:14px; }
+      .tap-head h2 { font-size:28px; }
+    }
+
     /* ── TV display styles — baked in, no JS injection needed ─────── */
 
     /* Section fills the screen with dark background and centers content */
