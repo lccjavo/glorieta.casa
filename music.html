@@ -202,7 +202,6 @@
     .menu-panel {
       overflow:auto;
       background:#110b07;
-      padding-bottom:160px;
     }
 
     .menu-panel .menu {
@@ -291,9 +290,6 @@
       body.music-page {
         overflow:auto;
       }
-      .menu-panel {
-        padding-bottom:90px;
-      }
       .menu-panel .cards {
         grid-template-columns:1fr;
       }
@@ -380,6 +376,16 @@
     const musicNav     = document.getElementById("musicNav");
     const btnVideo     = document.getElementById("btnVideo");
     const btnTaplist   = document.getElementById("btnTaplist");
+
+    // Add breathing room below item 10 so the floating nav buttons
+    // don't overlap the last beer row. Only extends the section's own
+    // dark background — no overlay, no layout change to the tap list.
+    taplistFrame.addEventListener('load', function () {
+      try {
+        const section = taplistFrame.contentDocument.getElementById('taplist');
+        if (section) section.style.paddingBottom = '180px';
+      } catch (e) {}
+    });
 
     function setPanel(showVideo) {
       showingVideo = showVideo;
