@@ -1,7 +1,10 @@
 [build]
   publish = "."
 
-[functions.menu-image]
+[functions.menu-image-es]
+  included_files = ["netlify/functions/assets/*.png"]
+
+[functions.menu-image-en]
   included_files = ["netlify/functions/assets/*.png"]
 
 [[edge_functions]]
@@ -35,13 +38,13 @@
 
 [[redirects]]
   from = "/menu.png"
-  to = "/.netlify/functions/menu-image?lang=es"
+  to = "/.netlify/functions/menu-image-es"
   status = 200
   force = true
 
 [[redirects]]
   from = "/menu_en.png"
-  to = "/.netlify/functions/menu-image?lang=en"
+  to = "/.netlify/functions/menu-image-en"
   status = 200
   force = true
 

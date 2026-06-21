@@ -7,9 +7,8 @@ const FALLBACK_PATH = {
   en: path.join(__dirname, 'assets', 'menu-en.png'),
 };
 
-exports.handler = async (event) => {
+async function serveMenuImage(event, lang) {
   connectLambda(event);
-  const lang = event.queryStringParameters && event.queryStringParameters.lang === 'en' ? 'en' : 'es';
   const store = getStore('site-config');
 
   let bytes = await store.get(`menu-${lang}`, { type: 'arrayBuffer' });
@@ -28,4 +27,6 @@ exports.handler = async (event) => {
     body: buffer.toString('base64'),
     isBase64Encoded: true,
   };
-};
+}
+
+module.exports = { serveMenuImage };
