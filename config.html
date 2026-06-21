@@ -31,7 +31,12 @@
   .msg.err { color: #e25b4d; }
   .upload-row { display: flex; gap: 24px; flex-wrap: wrap; }
   .upload-card { flex: 1; min-width: 240px; }
-  .upload-card img { max-width: 100%; margin-top: 8px; border-radius: 6px; border: 1px solid #333; }
+  .upload-card .preview-wrap { position: relative; margin-top: 8px; }
+  .upload-card img { max-width: 100%; display: block; border-radius: 6px; border: 1px solid #333; }
+  .upload-card .preview-wrap.uploading img { opacity: .3; }
+  .spinner { display: none; position: absolute; top: 50%; left: 50%; width: 36px; height: 36px; margin: -18px 0 0 -18px; border: 4px solid #444; border-top-color: #efb34a; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .preview-wrap.uploading .spinner { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   .hops-input { width: 70px; }
   .price-input { width: 90px; }
 </style>
@@ -69,11 +74,17 @@
   <div class="upload-row">
     <div class="upload-card">
       <label>Menú en español (PNG)<input type="file" id="menuEsFile" accept="image/png"></label>
-      <img id="menuEsPreview" src="/menu.png" alt="Menú ES">
+      <div class="preview-wrap" id="menuEsWrap">
+        <img id="menuEsPreview" src="/menu.png" alt="Menú ES">
+        <div class="spinner"></div>
+      </div>
     </div>
     <div class="upload-card">
       <label>Menú en inglés (PNG)<input type="file" id="menuEnFile" accept="image/png"></label>
-      <img id="menuEnPreview" src="/menu_en.png" alt="Menú EN">
+      <div class="preview-wrap" id="menuEnWrap">
+        <img id="menuEnPreview" src="/menu_en.png" alt="Menú EN">
+        <div class="spinner"></div>
+      </div>
     </div>
   </div>
   <div class="msg" id="menuMsg"></div>
@@ -176,28 +187,43 @@ function fileToBase64(file) {
   });
 }
 
-async function uploadMenu(lang, file, previewEl) {
+async function uploadMenu(lang, file, previewEl, fileInput, wrapEl) {
   const msg = document.getElementById('menuMsg');
-  const imageBase64 = await fileToBase64(file);
-  const res = await fetch('/api/menu-upload', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ lang, imageBase64 }),
-  });
-  if (res.ok) {
-    setMsg(msg, `Menú (${lang}) actualizado.`, true);
-    previewEl.src = previewEl.src.split('?')[0] + '?v=' + Date.now();
-  } else {
-    const data = await res.json().catch(() => ({}));
-    setMsg(msg, data.error || 'Error al subir imagen.', false);
+  fileInput.disabled = true;
+  wrapEl.classList.add('uploading');
+  setMsg(msg, `Subiendo menú (${lang})...`, true);
+  try {
+    const imageBase64 = await fileToBase64(file);
+    const res = await fetch('/api/menu-upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lang, imageBase64 }),
+    });
+    if (res.ok) {
+      setMsg(msg, `Menú (${lang}) actualizado.`, true);
+      previewEl.src = previewEl.src.split('?')[0] + '?v=' + Date.now();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setMsg(msg, data.error || 'Error al subir imagen.', false);
+    }
+  } catch (err) {
+    setMsg(msg, 'Error al subir imagen.', false);
+  } finally {
+    fileInput.disabled = false;
+    fileInput.value = '';
+    wrapEl.classList.remove('uploading');
   }
 }
 
 document.getElementById('menuEsFile').onchange = (e) => {
-  if (e.target.files[0]) uploadMenu('es', e.target.files[0], document.getElementById('menuEsPreview'));
+  if (e.target.files[0]) {
+    uploadMenu('es', e.target.files[0], document.getElementById('menuEsPreview'), e.target, document.getElementById('menuEsWrap'));
+  }
 };
 document.getElementById('menuEnFile').onchange = (e) => {
-  if (e.target.files[0]) uploadMenu('en', e.target.files[0], document.getElementById('menuEnPreview'));
+  if (e.target.files[0]) {
+    uploadMenu('en', e.target.files[0], document.getElementById('menuEnPreview'), e.target, document.getElementById('menuEnWrap'));
+  }
 };
 
 document.getElementById('logoutBtn').onclick = async () => {
