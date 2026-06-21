@@ -1,6 +1,9 @@
 [build]
   publish = "."
 
+[functions.menu-image]
+  included_files = ["netlify/functions/assets/*.png"]
+
 [[edge_functions]]
   path = "/*"
   function = "lang-detect"
