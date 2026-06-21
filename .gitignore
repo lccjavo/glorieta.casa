@@ -7,3 +7,13 @@ index.html_old
 
 # Logs
 *.log
+
+# Dependencies
+node_modules/
+
+# Netlify CLI
+.netlify/
+deno.lock
+
+# Local secrets
+.env

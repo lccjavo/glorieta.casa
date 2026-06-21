@@ -6,6 +6,43 @@
   function = "lang-detect"
 
 [[redirects]]
+  from = "/api/login"
+  to = "/.netlify/functions/auth-login"
+  status = 200
+
+[[redirects]]
+  from = "/api/logout"
+  to = "/.netlify/functions/auth-logout"
+  status = 200
+
+[[redirects]]
+  from = "/api/session"
+  to = "/.netlify/functions/auth-check"
+  status = 200
+
+[[redirects]]
+  from = "/api/taplist"
+  to = "/.netlify/functions/taplist"
+  status = 200
+
+[[redirects]]
+  from = "/api/menu-upload"
+  to = "/.netlify/functions/menu-upload"
+  status = 200
+
+[[redirects]]
+  from = "/menu.png"
+  to = "/.netlify/functions/menu-image?lang=es"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/menu_en.png"
+  to = "/.netlify/functions/menu-image?lang=en"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/:splat.html"
   status = 200
