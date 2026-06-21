@@ -22,7 +22,7 @@ async function serveMenuImage(event, lang) {
     statusCode: 200,
     headers: {
       'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=300',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
     },
     body: buffer.toString('base64'),
     isBase64Encoded: true,
