@@ -1,236 +1,44 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Config — Glorieta</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  :root { color-scheme: dark; }
-  * { box-sizing: border-box; }
-  body { font-family: system-ui, sans-serif; background: #15110f; color: #eee; margin: 0; padding: 24px; }
-  h1 { font-size: 1.4rem; margin: 0 0 16px; }
-  h2 { font-size: 1.1rem; margin: 32px 0 12px; }
-  .panel { max-width: 900px; margin: 0 auto; }
-  label { display: block; font-size: .85rem; margin-bottom: 4px; color: #bbb; }
-  input, select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #444; background: #221c19; color: #eee; font-size: .9rem; }
-  input[type=checkbox] { width: auto; }
-  button { background: #efb34a; color: #221c19; border: 0; border-radius: 6px; padding: 10px 18px; font-weight: 600; cursor: pointer; font-size: .9rem; }
-  button.secondary { background: #444; color: #eee; }
-  button.danger { background: #a63d2f; color: #eee; }
-  #loginForm { max-width: 320px; margin: 80px auto; display: flex; flex-direction: column; gap: 12px; }
-  #app { display: none; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-  th, td { padding: 6px; text-align: left; vertical-align: top; }
-  th { font-size: .75rem; color: #999; text-transform: uppercase; }
-  tr + tr td { border-top: 1px solid #2c2522; }
-  .row-actions { display: flex; gap: 6px; }
-  .toolbar { display: flex; gap: 10px; margin: 16px 0; }
+  body { background: #15110f; color: #eee; padding: 24px; }
+  h1 { font-size: 1.4rem; }
+  label { font-size: .85rem; color: #bbb; }
+  .form-control { background: #221c19; color: #eee; border-color: #444; }
+  .form-control:focus { background: #221c19; color: #eee; border-color: #efb34a; box-shadow: 0 0 0 .2rem rgba(239,179,74,.25); }
+  .btn-primary { background: #efb34a; border-color: #efb34a; color: #221c19; font-weight: 600; }
+  .btn-primary:hover { background: #e0a435; border-color: #e0a435; color: #221c19; }
+  #loginForm { max-width: 320px; margin: 80px auto; }
   .msg { margin: 10px 0; font-size: .85rem; }
-  .msg.ok { color: #6fbf73; }
   .msg.err { color: #e25b4d; }
-  .upload-row { display: flex; gap: 24px; flex-wrap: wrap; }
-  .upload-card { flex: 1; min-width: 240px; }
-  .upload-card .preview-wrap { position: relative; margin-top: 8px; }
-  .upload-card img { max-width: 100%; display: block; border-radius: 6px; border: 1px solid #333; }
-  .upload-card .preview-wrap.uploading img { opacity: .3; }
-  .spinner { display: none; position: absolute; top: 50%; left: 50%; width: 36px; height: 36px; margin: -18px 0 0 -18px; border: 4px solid #444; border-top-color: #efb34a; border-radius: 50%; animation: spin 0.8s linear infinite; }
-  .preview-wrap.uploading .spinner { display: block; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .hops-input { width: 70px; }
-  .price-input { width: 90px; }
+  .back-home { display: block; max-width: 320px; margin: 0 auto; }
 </style>
 </head>
 <body>
 
-<form id="loginForm">
+<a href="/" class="back-home btn btn-outline-secondary btn-sm">← Inicio</a>
+
+<form id="loginForm" class="d-flex flex-column gap-3">
   <h1>Config — Glorieta</h1>
-  <label>Usuario<input type="text" id="username" autocomplete="username" required></label>
-  <label>Contraseña<input type="password" id="password" autocomplete="current-password" required></label>
-  <button type="submit">Entrar</button>
+  <div>
+    <label class="form-label">Usuario</label>
+    <input type="text" class="form-control" id="username" autocomplete="username" required>
+  </div>
+  <div>
+    <label class="form-label">Contraseña</label>
+    <input type="password" class="form-control" id="password" autocomplete="current-password" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Entrar</button>
   <div class="msg err" id="loginMsg"></div>
 </form>
 
-<div class="panel" id="app">
-  <h1>Tap list y menú</h1>
-  <button class="secondary" id="logoutBtn" style="float:right">Salir</button>
-
-  <h2>Tap list</h2>
-  <table id="taplistTable">
-    <thead>
-      <tr>
-        <th>Nombre</th><th>Estilo</th><th>Cervecería</th><th>%ABV</th><th>Color</th><th>Lúpulo</th><th>Precio</th><th>Agotada</th><th></th>
-      </tr>
-    </thead>
-    <tbody id="taplistBody"></tbody>
-  </table>
-  <div class="toolbar">
-    <button type="button" class="secondary" id="addRowBtn">+ Agregar cerveza</button>
-    <button type="button" id="saveTaplistBtn">Guardar tap list</button>
-  </div>
-  <div class="msg" id="taplistMsg"></div>
-
-  <h2>Menú (imágenes)</h2>
-  <div class="upload-row">
-    <div class="upload-card">
-      <label>Menú en español (PNG)<input type="file" id="menuEsFile" accept="image/png"></label>
-      <div class="preview-wrap" id="menuEsWrap">
-        <img id="menuEsPreview" src="/menu.png" alt="Menú ES">
-        <div class="spinner"></div>
-      </div>
-    </div>
-    <div class="upload-card">
-      <label>Menú en inglés (PNG)<input type="file" id="menuEnFile" accept="image/png"></label>
-      <div class="preview-wrap" id="menuEnWrap">
-        <img id="menuEnPreview" src="/menu_en.png" alt="Menú EN">
-        <div class="spinner"></div>
-      </div>
-    </div>
-  </div>
-  <div class="msg" id="menuMsg"></div>
-</div>
-
 <script>
-const COLORS = ['pale', 'ipa', 'hazy', 'lager', 'red', 'vienna', 'stout', 'session'];
-
-function setMsg(el, text, ok) {
-  el.textContent = text;
-  el.className = 'msg ' + (ok ? 'ok' : 'err');
-}
-
-function rowFromItem(item) {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td><input class="f-name" value="${escapeAttr(item.name)}"></td>
-    <td><input class="f-style" value="${escapeAttr(item.style)}"></td>
-    <td><input class="f-brewery" value="${escapeAttr(item.brewery)}"></td>
-    <td><input class="f-abv" value="${escapeAttr(item.abv)}" style="width:70px"></td>
-    <td><select class="f-color">${COLORS.map(c => `<option value="${c}" ${c === item.color ? 'selected' : ''}>${c}</option>`).join('')}</select></td>
-    <td><input class="f-hops hops-input" type="number" min="0" max="5" value="${item.hops}"></td>
-    <td><input class="f-price price-input" type="number" min="0" value="${item.price}"></td>
-    <td><input class="f-soldout" type="checkbox" ${item.soldOut ? 'checked' : ''}></td>
-    <td class="row-actions">
-      <button type="button" class="secondary up">↑</button>
-      <button type="button" class="secondary down">↓</button>
-      <button type="button" class="danger del">✕</button>
-    </td>
-  `;
-  tr.querySelector('.up').onclick = () => moveRow(tr, -1);
-  tr.querySelector('.down').onclick = () => moveRow(tr, 1);
-  tr.querySelector('.del').onclick = () => tr.remove();
-  return tr;
-}
-
-function escapeAttr(str) {
-  return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-}
-
-function moveRow(tr, dir) {
-  const sibling = dir < 0 ? tr.previousElementSibling : tr.nextElementSibling;
-  if (!sibling) return;
-  if (dir < 0) sibling.before(tr);
-  else sibling.after(tr);
-}
-
-function readRows() {
-  return [...document.querySelectorAll('#taplistBody tr')].map(tr => ({
-    name: tr.querySelector('.f-name').value.trim(),
-    style: tr.querySelector('.f-style').value.trim(),
-    brewery: tr.querySelector('.f-brewery').value.trim(),
-    abv: tr.querySelector('.f-abv').value.trim(),
-    color: tr.querySelector('.f-color').value,
-    hops: parseInt(tr.querySelector('.f-hops').value, 10) || 0,
-    price: parseFloat(tr.querySelector('.f-price').value) || 0,
-    soldOut: tr.querySelector('.f-soldout').checked,
-  }));
-}
-
-async function loadTaplist() {
-  const res = await fetch('/api/taplist', { cache: 'no-store' });
-  const items = await res.json();
-  const body = document.getElementById('taplistBody');
-  body.innerHTML = '';
-  items.forEach(item => body.appendChild(rowFromItem(item)));
-}
-
-document.getElementById('addRowBtn').onclick = () => {
-  document.getElementById('taplistBody').appendChild(rowFromItem({
-    name: '', style: '', brewery: '', abv: '', color: 'pale', hops: 1, price: 100, soldOut: false,
-  }));
-};
-
-document.getElementById('saveTaplistBtn').onclick = async () => {
-  const msg = document.getElementById('taplistMsg');
-  const items = readRows();
-  if (items.some(i => !i.name)) {
-    setMsg(msg, 'Cada cerveza necesita un nombre.', false);
-    return;
-  }
-  const res = await fetch('/api/taplist', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(items),
-  });
-  if (res.ok) setMsg(msg, 'Guardado.', true);
-  else {
-    const data = await res.json().catch(() => ({}));
-    setMsg(msg, data.error || 'Error al guardar.', false);
-  }
-};
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-async function uploadMenu(lang, file, previewEl, fileInput, wrapEl) {
-  const msg = document.getElementById('menuMsg');
-  fileInput.disabled = true;
-  wrapEl.classList.add('uploading');
-  setMsg(msg, `Subiendo menú (${lang})...`, true);
-  try {
-    const imageBase64 = await fileToBase64(file);
-    const res = await fetch('/api/menu-upload', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lang, imageBase64 }),
-    });
-    if (res.ok) {
-      setMsg(msg, `Menú (${lang}) actualizado.`, true);
-      previewEl.src = previewEl.src.split('?')[0] + '?v=' + Date.now();
-    } else {
-      const data = await res.json().catch(() => ({}));
-      setMsg(msg, data.error || 'Error al subir imagen.', false);
-    }
-  } catch (err) {
-    setMsg(msg, 'Error al subir imagen.', false);
-  } finally {
-    fileInput.disabled = false;
-    fileInput.value = '';
-    wrapEl.classList.remove('uploading');
-  }
-}
-
-document.getElementById('menuEsFile').onchange = (e) => {
-  if (e.target.files[0]) {
-    uploadMenu('es', e.target.files[0], document.getElementById('menuEsPreview'), e.target, document.getElementById('menuEsWrap'));
-  }
-};
-document.getElementById('menuEnFile').onchange = (e) => {
-  if (e.target.files[0]) {
-    uploadMenu('en', e.target.files[0], document.getElementById('menuEnPreview'), e.target, document.getElementById('menuEnWrap'));
-  }
-};
-
-document.getElementById('logoutBtn').onclick = async () => {
-  await fetch('/api/logout', { method: 'POST' });
-  location.reload();
-};
-
 document.getElementById('loginForm').onsubmit = async (e) => {
   e.preventDefault();
   const username = document.getElementById('username').value;
@@ -241,22 +49,17 @@ document.getElementById('loginForm').onsubmit = async (e) => {
     body: JSON.stringify({ username, password }),
   });
   if (res.ok) {
-    showApp();
+    location.href = '/config-dashboard';
   } else {
-    setMsg(document.getElementById('loginMsg'), 'Usuario o contraseña incorrectos.', false);
+    const msg = document.getElementById('loginMsg');
+    msg.textContent = 'Usuario o contraseña incorrectos.';
   }
 };
-
-function showApp() {
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  loadTaplist();
-}
 
 (async function init() {
   const res = await fetch('/api/session');
   const data = await res.json();
-  if (data.authenticated) showApp();
+  if (data.authenticated) location.href = '/config-dashboard';
 })();
 </script>
 </body>
